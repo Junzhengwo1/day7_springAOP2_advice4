@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:aop="http://www.springframework.org/schema/aop"
+               xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+<!--配置spring的Ioc,把service对象配置进来-->
+<bean id="accountService" class="com.kou.service.impl.AccountServiceImpl">
+
+</bean>
+<!--spring中基于xml的IOC配置步骤
+    1.把通知bean也交给spring管理
+    2.使用aop：config标签表明开始AOP的配置
+    3.使用aop:aspect标签表明配置切面
+    4.在aop:aspect标签的内部来配置通知的类型
+            aop:before： 切入点表达式：全通配：* *..*.*(..)
+            实际开发中 切入点表达式的写法：com.kou.service.impl.*.*(..)
+-->
+<bean id="logger" class="com.kou.utils.Logger"></bean>
+
+<!--配置AOP-->
+<aop:config  >
+    <!--配置切入点表达式-->
+    <aop:pointcut id="pt1" expression="execution(* com.kou.service.impl.*.*(..))"></aop:pointcut>
+    <aop:aspect id="logAdvice" ref="logger">
+        <!--四种通知配置-->
+        <aop:before method="beforeprintLog" pointcut-ref="pt1" ></aop:before>
+        <aop:after-returning method="afterReturningPrintLog" pointcut-ref="pt1"></aop:after-returning>
+        <aop:after-throwing method="afterThrowingPrintLog" pointcut-ref="pt1"></aop:after-throwing>
+        <aop:after method="afterPrintLog" pointcut-ref="pt1"></aop:after>
+
+        <aop:around method="aroundPrintLog" pointcut-ref="pt1"></aop:around>
+
+
+    </aop:aspect>
+
+</aop:config>
+
+</beans>
